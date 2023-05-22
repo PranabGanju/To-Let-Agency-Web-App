@@ -1,25 +1,16 @@
 import React, { useState } from "react";
 import GridLoader from "react-spinners/GridLoader";
-import { css } from "styled-components";
 
 function Loader() {
   let [loading, setLoading] = useState(true);
-  let [color, setColor] = useState("#ffffff");
-  const override = css` 
-    display: "block",
-    margin: "0 auto",
-    borderColor: "red",
-    `;
   return (
-    <div>
-      <div className="sweet-loading">
+    <div style={{ marginTop: "200px" }}>
+      <div className="sweet-loading text-center">
         <GridLoader
           color=" #180976"
           loading={loading}
-          cssOverride={override}
-          size={90}
+          size={30}
           aria-label="Loading Spinner"
-          data-testid="loader"
         />
       </div>
     </div>
