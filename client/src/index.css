@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Lato', sans-serif !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.navbar {
+  background-color: black !important;
+}
+
+.nav-link {
+  color: white !important;
+}
+
+.navbar-brand {
+  color: white !important;
+}
+
+.navbar-nav {
+  margin-left: auto;
+}
+
+.smallimg{
+  height: 200px;
+  width: 100% !important;
+  border-radius: 5px !important;
+}
+h1{
+  font-size: 20px !important;
+  font-weight: bold !important;
+}
+.btn{
+  background-color: black !important;
+  color: white !important;
+  box-shadow: none !important;
+  
+}
+.bsw{
+  box-shadow: rgba(0, 0, 0, 0.696) 0px 3px 8px;
+  margin-top: 20px !important;
+  border-radius: 5px !important;
+  padding: 50px !important;
+}
+.bigimg{
+  height: 500px;
+  border-radius: 5px !important;
+}
+input{
+  box-shadow: none !important;
+  margin-top: 10px;
+  border: 1px solid black !important;
+
+}
+h2{
+  font-size: 30px !important;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold !important;
+}
+.center-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bigimg1{
+  height: 400px;
+  border-radius: 10px !important;
+  width: 100% !important;
+
+}
