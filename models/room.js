@@ -6,6 +6,7 @@ const roomSchema = new mongoose.Schema({
         required: true
     },
     imageurls: [],
+    currentbookings : [],
     rentpermonth: {
         type: Number,
         required: true
@@ -30,7 +31,10 @@ const roomSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    pincode: [Number],
+    pincode: {
+        type : String,
+        required :true
+    },
     description: {
         type: String,
         required: true

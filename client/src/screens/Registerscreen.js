@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
+import Success from "../components/Success";
+
 
 function Registerscreen() {
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [cpassword, setcpassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
+  const[success,setsuccess] = useState();
 
   async function register() {
     if (password == cpassword) {
@@ -16,19 +23,33 @@ function Registerscreen() {
         cpassword,
       };
       try {
+        setLoading(true);
         const result = await axios.post("/api/users/register", user).data;
+        setLoading(false)
+        setsuccess(true)
+
+        setname('')
+        setemail('')
+        setpassword('')
+        setcpassword('')
+
       } catch (error) {
         console.log(error);
+        setLoading(false);
+        setError(true)
       }
     } else {
       alert("passwords doesnot match");
     }
-  }
+  } 
 
   return (
     <div>
-      <div className="row justify-content-center mt-5">
+      {loading && Error(<Loader/>)}
+      {error && (<Error/>)}
+       <div className="row justify-content-center mt-5">
         <div className="col-md-5">
+        {success && (<Success message = "Registration Success" />)}
           <div className="bsw text-center">
             <h2>Register</h2>
             <input

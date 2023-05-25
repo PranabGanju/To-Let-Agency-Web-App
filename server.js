@@ -5,6 +5,7 @@ const dbConfig = require("./db");
 const roomRoute = require("./routes/roomRoute");
 const usersRoute = require("./routes/usersRoute");
 
+
 // Enable CORS middleware
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/rooms", roomRoute);
 app.use("/api/users", usersRoute);
+
 
 const port = process.env.PORT || 5000;
 
