@@ -13,17 +13,21 @@ const bookingSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  size: {
-    type: String,
-    required: true
+  frommonth : {
+    type : String,
+    required : true
   },
-  furnishing: {
-    type: String,
-    required: true
+  tomonth : {
+    type : String,
+    required : true
   },
-  rentpermonth: {
+  totalamount: {
     type: Number,
     required: true
+  },
+  totalmonths : {
+    type : Number,
+    required : true
   },
   transactionId: {
     type: String,

@@ -3,12 +3,18 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import moment from "moment";
 
 function Bookingscreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [room, setRoom] = useState({});
-  const { roomid } = useParams();
+  const { roomid , frommonth , tomonth} = useParams();
+  
+  const fromDate = moment(frommonth, "MMMM YYYY"); // Convert frommonth to a moment object
+  const toDate = moment(tomonth, "MMMM YYYY"); // Convert tomonth to a moment object
+  const totalmonths = toDate.diff(fromDate, "months");
+  const totalamount = totalmonths * room.rentpermonth;
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -26,12 +32,30 @@ function Bookingscreen() {
     fetchRoomData();
   }, [roomid]);
 
+  async function bookRoom() {
+    const bookingDetails = {
+      room,
+      userid: JSON.parse(localStorage.getItem("currentUser"))._id,
+      roomid, // Add roomid here
+      frommonth,
+      tomonth,
+      totalmonths,
+      totalamount,
+    };
+    
+    try {
+      const result = await axios.post("/api/bookings/bookroom", bookingDetails);
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
       {loading ? (
-        <Loader/>
-      ) : room ? 
-       (
+        <Loader />
+      ) : room ? (
         <div className="m-5">
           <div className="row justify-content-center mt-5 bsw">
             <div className="col-md-6">
@@ -44,11 +68,11 @@ function Bookingscreen() {
                 <h1>Booking Details</h1>
                 <hr />
                 <b>
-                  <p>Name: {room.name} </p>
+                  <p>Name: {JSON.parse(localStorage.getItem('currentUser')).name} </p>
                   <p>Size: {room.size} </p>
-                  <p>Furnishing: {room.furnishing} </p>
                   <p>Location: {room.location} </p>
-                  <p>Parking : {room.parking} </p>
+                  <p>From Month : {frommonth}</p>
+                  <p>To Month :{tomonth}</p>
                 </b>
               </div>
 
@@ -56,17 +80,23 @@ function Bookingscreen() {
                 <b>
                   <h1>Amount</h1>
                   <hr />
+                  <p>No of Months : {totalmonths} </p>
                   <p>Rent Per Month : {room.rentpermonth} </p>
+                  <p>Total Amount : {totalamount}</p>
                 </b>
               </div>
 
               <div style={{ float: "right" }}>
-                <button className="btn btn-primary">Pay Now</button>
+                <button className="btn btn-primary" onClick={bookRoom}>
+                  Pay Now
+                </button>
               </div>
             </div>
           </div>
         </div>
-      ): (<Error/>)}
+      ) : (
+        <Error />
+      )}
     </div>
   );
 }
