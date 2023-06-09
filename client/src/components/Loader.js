@@ -7,7 +7,7 @@ function Loader() {
     <div style={{ marginTop: "200px" }}>
       <div className="sweet-loading text-center">
         <GridLoader
-          color=" #180976"
+          color= "darkslategrey"
           loading={loading}
           size={30}
           aria-label="Loading Spinner"

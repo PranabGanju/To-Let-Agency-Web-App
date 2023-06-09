@@ -9,7 +9,7 @@ function Navbar() {
   return (
     <div>
       <nav className="navbar navbar-expand-lg">
-        <a className="navbar-brand" href="#">
+        <a className="navbar-brand" href="/home">
           To-Let Web Agency
         </a>
         <button
@@ -46,8 +46,8 @@ function Navbar() {
                     aria-labelledby="dropdownMenuButton"
                     style={{ color: "white" }}
                   >
-                    <a class="dropdown-item" href="#">
-                      Bookings
+                    <a class="dropdown-item" href="/profile">
+                      Profile
                     </a>
                     <a class="dropdown-item" href="#" onClick={logout}>
                       Logout

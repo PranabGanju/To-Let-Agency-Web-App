@@ -13,9 +13,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+p{
+  font-size: 17px !important;
+}
 
 .navbar {
-  background-color: black !important;
+  background-color: darkslategrey !important;
 }
 
 .nav-link {
@@ -40,16 +43,16 @@ h1{
   font-weight: bold !important;
 }
 .btn{
-  background-color: black !important;
+  background-color: darkslategray !important;
   color: white !important;
   box-shadow: none !important;
   
 }
-.bsw{
+.bsw {
   box-shadow: rgba(0, 0, 0, 0.696) 0px 3px 8px;
-  margin-top: 20px !important;
+  margin-top: 10px !important; /* Adjust the margin-top value as needed */
   border-radius: 5px !important;
-  padding: 50px !important;
+  padding: 10px !important;
 }
 .bigimg{
   height: 500px;
@@ -57,12 +60,21 @@ h1{
 }
 input{
   box-shadow: none !important;
+  border: 2px solid black !important;
+  width: 100% !important;
+  border-radius: 5px !important;
+  height: 35 px !important;
+}
+.ant-picker{
+  box-shadow: none !important;
   margin-top: 10px;
-  border: 1px solid black !important;
-
+  border: 2px solid black !important;
+  width: 100% !important;
+  border-radius: 3px !important;
+  height: 35 px !important;
 }
 h2{
-  font-size: 30px !important;
+  font-size: 30px;
   padding: 10px;
   text-align: center;
   font-weight: bold !important;
@@ -79,7 +91,7 @@ h2{
 
 }
 .dropdown-toggle{
-  border : 0px solid black !important;
+  border : 0px solid rgb(6, 207, 147) !important;
 }
 .user-button {
   display: flex;
@@ -93,4 +105,81 @@ h2{
 .user-greeting {
   font-weight: bold;
   margin-left: 5px;
+}
+.container {
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+}
+
+.col-md-3 {
+  padding-right: 5px;
+}
+
+.col-md-5 {
+  padding-left: 5px;
+}
+
+
+.row.justify-content-center {
+  margin-top: 30px;
+}
+.bold-text {
+  font-weight: bold;
+}
+
+.ant-picker-input input{
+  border: none !important;
+}
+.bold-tab {
+  font-weight: bold;
+}
+.table-container {
+  display: flex;
+  justify-content: center;
+}
+.bsw2 {
+  box-shadow: rgba(0, 0, 0, 0.696) 0px 3px 8px;
+  margin-top: 30px; /* Adjust the margin-top value as needed */
+  border-radius: 10px;
+  padding: 30px;
+  justify-content: center;
+  align-items: center;
+}
+.ant-tabs-content-holder .ant-tabs-content .ant-tabs-content-top{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+.form-control {
+  box-shadow: none !important;
+  margin-top: 10px; /* Increase the margin-top value to add more space */
+  margin-bottom: 5px; /* Add margin-bottom to create space between input fields */
+  border: 2px solid black !important;
+  width: 100% !important;
+  border-radius: 2px !important;
+  height: 35px !important;
+}
+div .row ml-5 mr-5 bsw{
+  justify-content: center;
+}
+.landing{
+  background-color: darkseagreen !important;
+  height: 100vh;
+
+}
+.landingbtn{
+  background-color: darkslategrey !important;
+  color: white !important;
+  margin-top: 5px !important;
+
 }

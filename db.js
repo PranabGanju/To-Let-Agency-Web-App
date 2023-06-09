@@ -6,6 +6,7 @@ var mongoURL =
 mongoose.connect(mongoURL, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
+  connectTimeoutMS: 60000,
 });
 
 var connection = mongoose.connection;

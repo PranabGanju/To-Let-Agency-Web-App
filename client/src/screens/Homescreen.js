@@ -12,6 +12,7 @@ function Homescreen() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [fromMonth, setFromMonth] = useState();
   const [toMonth, setToMonth] = useState();
@@ -41,6 +42,18 @@ function Homescreen() {
     const fromMonth = startMonth.startOf("month").format("YYYY-MM-DD");
     const toMonth = endMonth.endOf("month").format("YYYY-MM-DD");
 
+    setFromMonth(startMonth.startOf("month").format("MMMM YYYY"));
+    setToMonth(endMonth.endOf("month").format("MMMM YYYY"));
+
+    applyFilters(fromMonth, toMonth);
+  }
+
+  function handleSearch(event) {
+    setSearchQuery(event.target.value);
+    applyFilters(fromMonth, toMonth, event.target.value);
+  }
+
+  function applyFilters(fromMonth, toMonth, searchQuery = "") {
     const tempRooms = rentalrooms.filter((room) => {
       let isAvailable = true;
 
@@ -64,19 +77,32 @@ function Homescreen() {
       return isAvailable;
     });
 
-    setFromMonth(startMonth.startOf("month").format("MMMM YYYY"));
-    setToMonth(endMonth.endOf("month").format("MMMM YYYY"));
-    setRooms(tempRooms);
+    // Apply search filter to tempRooms based on location
+    const filteredRooms = tempRooms.filter((room) =>
+      room.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setRooms(filteredRooms);
   }
 
   return (
     <div className="container">
-      <div className="row mt-5">
-        <div className="col-md-3">
+      <div className="row mt-5 bsw">
+        <div className="col-md-3 ">
           <RangePicker
             picker="month"
             format="MMMM YYYY"
             onChange={filterByMonth}
+          />
+        </div>
+
+        <div className="col-md-5">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter Location"
+            value={searchQuery}
+            onChange={handleSearch}
           />
         </div>
       </div>

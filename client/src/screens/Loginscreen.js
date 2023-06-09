@@ -37,7 +37,7 @@ function Loginscreen() {
     <div>
         {loading && Error(<Loader/>)}
       <div className="row justify-content-center mt-5">
-        <div className="col-md-5 mt-5">
+        <div className="col-md-5 ">
         {error && (<Error message = "Invalid Credentials"/>)}
 
           <div className="bsw">

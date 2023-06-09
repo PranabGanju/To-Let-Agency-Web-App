@@ -4,20 +4,32 @@ import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
 import moment from "moment";
+import StripeCheckout from "react-stripe-checkout";
+import Swal from "sweetalert2";
+import AOS from "aos";
+import "aos/dist/aos.css"; // You can also use <link> for styles
+// ..
+AOS.init({
+  duration: 1000,
+});
 
 function Bookingscreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [room, setRoom] = useState({});
-  const { roomid , frommonth , tomonth} = useParams();
-  
-  const fromDate = moment(frommonth, "MMMM YYYY"); // Convert frommonth to a moment object
-  const toDate = moment(tomonth, "MMMM YYYY"); // Convert tomonth to a moment object
+  const { roomid, frommonth, tomonth } = useParams();
+
+  const fromDate = moment(frommonth, "MMMM YYYY");
+  const toDate = moment(tomonth, "MMMM YYYY");
   const totalmonths = toDate.diff(fromDate, "months");
   const totalamount = totalmonths * room.rentpermonth;
 
   useEffect(() => {
     const fetchRoomData = async () => {
+      if (localStorage.getItem("currentUser")) {
+        window.location.reload = "/login";
+      }
+
       try {
         setLoading(true);
         const response = await axios.get(`/api/rooms/getroomsbyid/${roomid}`);
@@ -32,22 +44,34 @@ function Bookingscreen() {
     fetchRoomData();
   }, [roomid]);
 
-  async function bookRoom() {
+  async function onToken(token) {
+    console.log(token);
     const bookingDetails = {
       room,
       userid: JSON.parse(localStorage.getItem("currentUser"))._id,
-      roomid, // Add roomid here
+      roomid,
       frommonth,
       tomonth,
       totalmonths,
       totalamount,
+      token,
     };
-    
+
     try {
+      setLoading(true);
       const result = await axios.post("/api/bookings/bookroom", bookingDetails);
       console.log(result);
+      setLoading(false);
+      Swal.fire(
+        "Congratulations",
+        "Your Room is Booked Successfully",
+        "success"
+      ).then((result) => {
+        window.location.href = "/bookings";
+      });
     } catch (error) {
-      console.log(error);
+      setLoading(false);
+      Swal.fire("Sorry", "Something Went Wrong", "error");
     }
   }
 
@@ -56,11 +80,11 @@ function Bookingscreen() {
       {loading ? (
         <Loader />
       ) : room ? (
-        <div className="m-5">
+        <div className="m-5" data-aos="flip-left">
           <div className="row justify-content-center mt-5 bsw">
             <div className="col-md-6">
               <h1>{room.name}</h1>
-              <img src={room.imageurls[0]} className="bigimg1" />
+              <img src={room.imageurls[0]} className="bigimg1" alt="" />
             </div>
 
             <div className="col-md-6">
@@ -68,11 +92,13 @@ function Bookingscreen() {
                 <h1>Booking Details</h1>
                 <hr />
                 <b>
-                  <p>Name: {JSON.parse(localStorage.getItem('currentUser')).name} </p>
-                  <p>Size: {room.size} </p>
-                  <p>Location: {room.location} </p>
-                  <p>From Month : {frommonth}</p>
-                  <p>To Month :{tomonth}</p>
+                  <p>
+                    Name: {JSON.parse(localStorage.getItem("currentUser")).name}
+                  </p>
+                  <p>Size: {room.size}</p>
+                  <p>Location: {room.location}</p>
+                  <p>From Month: {frommonth}</p>
+                  <p>To Month: {tomonth}</p>
                 </b>
               </div>
 
@@ -80,16 +106,21 @@ function Bookingscreen() {
                 <b>
                   <h1>Amount</h1>
                   <hr />
-                  <p>No of Months : {totalmonths} </p>
-                  <p>Rent Per Month : {room.rentpermonth} </p>
-                  <p>Total Amount : {totalamount}</p>
+                  <p>No of Months: {totalmonths}</p>
+                  <p>Rent Per Month: {room.rentpermonth}</p>
+                  <p>Total Amount: {totalamount}</p>
                 </b>
               </div>
 
               <div style={{ float: "right" }}>
-                <button className="btn btn-primary" onClick={bookRoom}>
-                  Pay Now
-                </button>
+                <StripeCheckout
+                  amount={totalamount * 100}
+                  token={onToken}
+                  currency="INR"
+                  stripeKey="pk_test_51NCPxOSFe2XCu71R5TJ4NNbNhhpkJQMfvVO84DPCFgJaWUQQpnBtDGd8cMNb4klyRTuwXzBSfXAGnHYiv3zK2KId00rlIyprwK"
+                >
+                  <button className="btn btn-primary">Pay Now</button>
+                </StripeCheckout>
               </div>
             </div>
           </div>
