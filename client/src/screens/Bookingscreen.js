@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
 import moment from "moment";
 import StripeCheckout from "react-stripe-checkout";
 import Swal from "sweetalert2";
 import AOS from "aos";
-import "aos/dist/aos.css"; // You can also use <link> for styles
-// ..
+import "aos/dist/aos.css";
+
 AOS.init({
   duration: 1000,
 });
@@ -18,6 +18,7 @@ function Bookingscreen() {
   const [error, setError] = useState(false);
   const [room, setRoom] = useState({});
   const { roomid, frommonth, tomonth } = useParams();
+  const navigate = useNavigate();
 
   const fromDate = moment(frommonth, "MMMM YYYY");
   const toDate = moment(tomonth, "MMMM YYYY");
@@ -26,10 +27,6 @@ function Bookingscreen() {
 
   useEffect(() => {
     const fetchRoomData = async () => {
-      if (localStorage.getItem("currentUser")) {
-        window.location.reload = "/login";
-      }
-
       try {
         setLoading(true);
         const response = await axios.get(`/api/rooms/getroomsbyid/${roomid}`);
@@ -41,7 +38,12 @@ function Bookingscreen() {
       }
     };
 
-    fetchRoomData();
+    if (!localStorage.getItem("currentUser")) {
+      setError(true);
+      setLoading(false);
+    } else {
+      fetchRoomData();
+    }
   }, [roomid]);
 
   async function onToken(token) {
@@ -75,59 +77,64 @@ function Bookingscreen() {
     }
   }
 
+  if (loading) {
+    return <Loader />;
+  } else if (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "You need to be logged in to access this page",
+    }).then(() => {
+      navigate("/login");
+    });
+    return null;
+  }
+
   return (
-    <div>
-      {loading ? (
-        <Loader />
-      ) : room ? (
-        <div className="m-5" data-aos="flip-left">
-          <div className="row justify-content-center mt-5 bsw">
-            <div className="col-md-6">
-              <h1>{room.name}</h1>
-              <img src={room.imageurls[0]} className="bigimg1" alt="" />
-            </div>
+    <div className="m-5">
+      <div className="row justify-content-center mt-5 bsw">
+        <div className="col-md-6">
+          <h1>{room.name}</h1>
+          <img src={room.imageurls[0]} className="bigimg1" alt="" />
+        </div>
 
-            <div className="col-md-6">
-              <div style={{ textAlign: "right" }}>
-                <h1>Booking Details</h1>
-                <hr />
-                <b>
-                  <p>
-                    Name: {JSON.parse(localStorage.getItem("currentUser")).name}
-                  </p>
-                  <p>Size: {room.size}</p>
-                  <p>Location: {room.location}</p>
-                  <p>From Month: {frommonth}</p>
-                  <p>To Month: {tomonth}</p>
-                </b>
-              </div>
+        <div className="col-md-6">
+          <div style={{ textAlign: "right" }}>
+            <h1>Booking Details</h1>
+            <hr />
+            <b>
+              <p>
+                Name: {JSON.parse(localStorage.getItem("currentUser")).name}
+              </p>
+              <p>Size: {room.size}</p>
+              <p>Location: {room.location}</p>
+              <p>From Month: {frommonth}</p>
+              <p>To Month: {tomonth}</p>
+            </b>
+          </div>
 
-              <div style={{ textAlign: "right" }}>
-                <b>
-                  <h1>Amount</h1>
-                  <hr />
-                  <p>No of Months: {totalmonths}</p>
-                  <p>Rent Per Month: {room.rentpermonth}</p>
-                  <p>Total Amount: {totalamount}</p>
-                </b>
-              </div>
+          <div style={{ textAlign: "right" }}>
+            <b>
+              <h1>Amount</h1>
+              <hr />
+              <p>No of Months: {totalmonths}</p>
+              <p>Rent Per Month: {room.rentpermonth}</p>
+              <p>Total Amount: {totalamount}</p>
+            </b>
+          </div>
 
-              <div style={{ float: "right" }}>
-                <StripeCheckout
-                  amount={totalamount * 100}
-                  token={onToken}
-                  currency="INR"
-                  stripeKey="pk_test_51NCPxOSFe2XCu71R5TJ4NNbNhhpkJQMfvVO84DPCFgJaWUQQpnBtDGd8cMNb4klyRTuwXzBSfXAGnHYiv3zK2KId00rlIyprwK"
-                >
-                  <button className="btn btn-primary">Pay Now</button>
-                </StripeCheckout>
-              </div>
-            </div>
+          <div style={{ float: "right" }}>
+            <StripeCheckout
+              amount={totalamount * 100}
+              token={onToken}
+              currency="INR"
+              stripeKey="pk_test_51NCPxOSFe2XCu71R5TJ4NNbNhhpkJQMfvVO84DPCFgJaWUQQpnBtDGd8cMNb4klyRTuwXzBSfXAGnHYiv3zK2KId00rlIyprwK"
+            >
+              <button className="btn btn-primary">Pay Now</button>
+            </StripeCheckout>
           </div>
         </div>
-      ) : (
-        <Error />
-      )}
+      </div>
     </div>
   );
 }

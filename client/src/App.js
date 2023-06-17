@@ -8,6 +8,9 @@ import Bookingscreen from './screens/Bookingscreen';
 import Profilescreen from './screens/Profilescreen';
 import Adminscreen from './screens/Adminscreen';
 import Landingscreen from './screens/Landingscreen';
+import Ownerscreen from './screens/Ownerscreen';
+
+
 
 function App() {
   return (
@@ -22,6 +25,8 @@ function App() {
           <Route path="/profile" element={<Profilescreen />} />
           <Route path = "/admin" element = {<Adminscreen/>} />
           <Route path = "/" element = {<Landingscreen/>} />
+          <Route path="/owner" element={<Ownerscreen />} />
+
         </Routes>
       </Router>
     </div>

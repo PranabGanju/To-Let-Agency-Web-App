@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import Swal from "sweetalert2";
+
+
 
 function Loginscreen() {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState(false);
 
   async function login() {
     const user = {
@@ -20,11 +23,16 @@ function Loginscreen() {
       const response = await axios.post("/api/users/login", user);
       const result = response.data;
       setLoading(false);
-  
 
-      localStorage.setItem('currentUser' , JSON.stringify(result));
-      window.location.href = '/home';
+      localStorage.setItem("currentUser", JSON.stringify(result));
 
+      Swal.fire({
+        icon: "success",
+        title: "Login Success",
+        text: "You have been logged in successfully!",
+      }).then(() => {
+        window.location.href = "/home"; // Redirect to the home screen
+      });
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -33,12 +41,15 @@ function Loginscreen() {
     }
   }
 
+  
+  
+
   return (
     <div>
-        {loading && Error(<Loader/>)}
+      {loading && <Loader />}
       <div className="row justify-content-center mt-5">
-        <div className="col-md-5 ">
-        {error && (<Error message = "Invalid Credentials"/>)}
+        <div className="col-md-5">
+          {error && <Error message="Invalid Credentials" />}
 
           <div className="bsw">
             <h2>Login</h2>

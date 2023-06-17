@@ -26,6 +26,7 @@ function Profilescreen() {
           <h1>Name : {user.name}</h1>
           <h1>Email : {user.email}</h1>
           <h1>isAdmin : {user.isAdmin ? "YES" : "NO"}</h1>
+          <h1>isOwner : {user.isOwner ? "YES" : "NO"}</h1>
         </TabPane>
         <TabPane tab="Bookings" key="2">
           <p>

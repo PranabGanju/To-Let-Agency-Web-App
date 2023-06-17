@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 var mongoURL =
-  "mongodb+srv://pranab:Pranab1stdb@cluster0.uyn26vt.mongodb.net/to-let_agency";
+  "mongodb+srv://pranab:Pranab2nddb@cluster0.uyn26vt.mongodb.net/to-let_agency";
 
 mongoose.connect(mongoURL, {
   useUnifiedTopology: true,
@@ -20,4 +20,3 @@ connection.on("connected", () => {
 });
 
 module.exports = connection;
-

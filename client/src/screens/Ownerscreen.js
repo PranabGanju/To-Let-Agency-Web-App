@@ -4,225 +4,156 @@ import axios from "axios";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
 import Swal from "sweetalert2";
+import { Divider, Space, Tag } from "antd";
 
-function Adminscreen() {
+const { TabPane } = Tabs;
+const Ownerscreen = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  const { TabPane } = Tabs;
+
   useEffect(() => {
-    if (!JSON.parse(localStorage.getItem("currentUser")).isAdmin) {
+    if (!JSON.parse(localStorage.getItem("currentUser")).isOwner) {
       window.location.href = "/home";
+    }
+    if (!user) {
+      window.location.href = "/owner";
     }
   }, []);
 
-  const { TabPane } = Tabs;
   return (
-    <div className=" mt-3 ml-3 mr-3 bsw">
-      <h2 className="text-center" style={{ fontSize: "30px" }}>
-        <b>Admin Panel</b>
-      </h2>
-      <Tabs defaultActiveKey="1" centered>
-        <TabPane tab="Bookings" key="1">
-          <Bookings />
-        </TabPane>
-        <TabPane tab="Rooms" key="2">
-          <Rooms />
-        </TabPane>
-        <TabPane tab="Add Room" key="3">
-          <Addroom />
-        </TabPane>
-        <TabPane tab="Users" key="4">
-          <Users />
-        </TabPane>
-      </Tabs>
+    <div>
+      <div>
+        <Tabs defaultActiveKey="1" centered>
+          <TabPane tab="Owner" key="1" className="text-center">
+            <h1>My Profile</h1>
+            <br />
+            {loading ? (
+              <Loader />
+            ) : error ? (
+              <Error message="Failed to fetch user data" />
+            ) : (
+              <div>
+                <h1>Name: {user.name}</h1>
+                <h1>Email: {user.email}</h1>
+                <h1>isOwner: {user.isOwner ? "YES" : "NO"}</h1>
+              </div>
+            )}
+          </TabPane>
+          <TabPane tab="Add Room" key="2">
+            <p>
+              <Addroom />
+            </p>
+          </TabPane>
+        </Tabs>
+      </div>
     </div>
   );
-}
+};
 
-export default Adminscreen;
+export default Ownerscreen;
 
-// Booking Component for Admin panel
-export function Bookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+export function MyBookings() {
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  const [bookings, setbookings] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const data = await (
-          await axios.get("/api/bookings/getallbookings")
-        ).data;
-        setBookings(data);
+        setLoading(true);
+        const response = await axios.post("/api/bookings/getbookingsbyuserid", {
+          userid: user._id,
+        });
+        console.log(response.data);
+        setbookings(response.data);
         setLoading(false);
       } catch (error) {
         console.log(error);
         setLoading(false);
-        setError(error);
+        setError(true);
       }
     };
 
     fetchBookings();
   }, []);
 
+  async function cancelBooking(bookingid, roomid) {
+    try {
+      setLoading(true);
+      const result = await (
+        await axios.post("/api/bookings/cancelbooking", { bookingid, roomid })
+      ).data;
+      console.log(result);
+      setLoading(false);
+      Swal.fire("Congrats", "Your Booking has been cancelled", "success").then(
+        (result) => {
+          window.location.reload();
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      Swal.fire("Oops", "Something went wrong", "error");
+    }
+  }
+
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Bookings</h1>
-        {loading && <Loader />}
-
-        <table className="table table-bordered table-striped table-dark">
-          <thead className="thead-dark bsw">
-            <tr className="text-center">
-              <th>Booking Id</th>
-              <th>User Id</th>
-              <th>Room</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {bookings.length &&
-              bookings.map((booking) => {
-                return (
-                  <tr className="text-center">
-                    <td>{booking._id}</td>
-                    <td>{booking.userid}</td>
-                    <td>{booking.room}</td>
-                    <td>{booking.frommonth}</td>
-                    <td>{booking.tomonth}</td>
-                    <td>{booking.status}</td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
+    <div>
+      <div className="row">
+        <div className="col-md-6 ml-4 mr-4">
+          {loading && <Loader />}
+          {bookings &&
+            bookings.map((booking) => {
+              return (
+                <div className="bsw2">
+                  <h1>{booking.room}</h1>
+                  <p>
+                    <b>BookingId :</b> {booking._id}
+                  </p>
+                  <p>
+                    <b>TransactionId :</b> {booking.transactionId}{" "}
+                  </p>
+                  <p>
+                    <b>Start Month :</b> {booking.frommonth}
+                  </p>
+                  <p>
+                    <b>End Month :</b> {booking.tomonth}
+                  </p>
+                  <p>
+                    <b>Amount :</b> {booking.totalamount}{" "}
+                  </p>
+                  <p>
+                    <b>Status :</b>
+                    {booking.status == "cancelled" ? (
+                      <Tag color="volcano">CANCELLED</Tag>
+                    ) : (
+                      <Tag color="green">CONFIRMED</Tag>
+                    )}
+                  </p>
+                  {booking.status !== "cancelled" && (
+                    <div className="text-right">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() =>
+                          cancelBooking(booking._id, booking.roomid)
+                        }
+                      >
+                        CANCEL BOOKING
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+        </div>
       </div>
     </div>
   );
 }
-
-// Room Component for Admin panel
-export function Rooms() {
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState();
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await axios.get("/api/rooms/getallrooms");
-        console.log("API response:", response.data);
-        setRooms(response.data.rooms);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-        setError(error);
-      }
-    };
-
-    fetchRooms();
-  }, []);
-
-  return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Rooms</h1>
-        {loading && <Loader />}
-
-        <table className="table table-bordered table-dark table-striped">
-          <thead className="thead-dark bsw">
-            <tr className="text-center">
-              <th>Room Id</th>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Furnishing</th>
-              <th>Parking</th>
-              <th>Rent Per Month</th>
-              <th>Phone Number</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {rooms.length &&
-              rooms.map((room) => {
-                return (
-                  <tr className="text-center">
-                    <td>{room._id}</td>
-                    <td>{room.name}</td>
-                    <td>{room.size}</td>
-                    <td>{room.furnishing}</td>
-                    <td>{room.parking}</td>
-                    <td>{room.rentpermonth}</td>
-                    <td>{room.phonenumber}</td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// User Component for Admin panel
-
-export function Users() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState();
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("/api/users/getallusers");
-        setUsers(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-        setError(error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Users</h1>
-        <table className="table table-dark table-bordered text-center table-striped">
-          <thead>
-            <tr>
-              <th>User Id</th>
-              <th>User Name</th>
-              <th>Email</th>
-              <th>Is Admin</th>
-              <th>Is Owner</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users &&
-              users.map((user) => {
-                return (
-                  <tr>
-                    <td>{user._id}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.isAdmin ? "Yes" : " NO"}</td>
-                    <td>{user.isOwner ? "Yes" : "NO"}</td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// Add room Component for Admin panel
 
 function Addroom() {
   const [loading, setLoading] = useState(false);

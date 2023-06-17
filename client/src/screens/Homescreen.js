@@ -6,7 +6,9 @@ import Error from "../components/Error";
 import { DatePicker, Space } from "antd";
 import moment from "moment";
 import "antd/dist/reset.css";
+import Swal from "sweetalert2";
 const { RangePicker } = DatePicker;
+
 
 function Homescreen() {
   const [rooms, setRooms] = useState([]);
@@ -41,10 +43,21 @@ function Homescreen() {
     const [startMonth, endMonth] = dates;
     const fromMonth = startMonth.startOf("month").format("YYYY-MM-DD");
     const toMonth = endMonth.endOf("month").format("YYYY-MM-DD");
-
+  
+    const durationInMonths = endMonth.diff(startMonth, "months") + 1; // Add 1 to include both the start and end months
+  
+    if (durationInMonths > 11) {
+      Swal.fire({icon: "error",
+      title: "Oops ",
+      text: "Room booking is only available for up to 11 months."}).then(() => {
+        window.location.reload();
+      });
+      return;
+    }
+  
     setFromMonth(startMonth.startOf("month").format("MMMM YYYY"));
     setToMonth(endMonth.endOf("month").format("MMMM YYYY"));
-
+  
     applyFilters(fromMonth, toMonth);
   }
 

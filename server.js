@@ -5,6 +5,7 @@ const dbConfig = require("./db");
 const roomRoute = require("./routes/roomRoute");
 const usersRoute = require("./routes/usersRoute");
 const bookingsRoute = require("./routes/bookingsRoute");
+const ownerRoute = require("./routes/ownerRoute");
 
 // Enable CORS middleware
 app.use((req, res, next) => {
@@ -25,6 +26,8 @@ app.get("/", (req, res) => {
 app.use("/api/rooms", roomRoute);
 app.use("/api/users", usersRoute);
 app.use("/api/bookings", bookingsRoute);
+app.use("/api/owner", ownerRoute);
+// <-- Corrected the variable name to usersRoute
 
 const port = process.env.PORT || 5000;
 
